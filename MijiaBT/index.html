@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/loader.css" />
+    <link rel="stylesheet" href="css/w3.css">
+    <link rel="stylesheet" href="css/app.css" />
+
+    <!-- vuejs -->
+    <script src="lib/vue/vue.min.js"></script>
+    <script src="js/mj_ht_v1.js"></script>
+
+    
+    <!-- Winjs -->
+    <script src="lib/winjs/base.js"></script>
+
+    
+    
+    
+    
+
+</head>
+
+<body>
+    <div id="app">
+        <nav id="main-menu" class="w3-bar w3-top w3-wide w3-padding w3-card w3-indigo">
+            <span class="w3-bar-item">Mijia BT</span>
+            <a href="#" class="w3-bar-item w3-button w3-right" v-on:click="scan()">+</a>
+            <a href="#" class="w3-bar-item w3-button w3-right" v-if="debugEnabled" v-on:click="debugView = !debugView">@</a>
+            <span class="w3-bar-item w3-right" v-if="refreshing">
+                <img style="height:16px" src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjUxMnB4IiBoZWlnaHQ9IjUxMnB4IiB2aWV3Qm94PSIwIDAgNTEwIDUxMCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTEwIDUxMDsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8Zz4KCTxnIGlkPSJibHVldG9vdGgtc2VhcmNoaW5nIj4KCQk8cGF0aCBkPSJNMzExLjEsMjU1bDU4LjY1LDU4LjY1YzcuNjUtMTcuODUxLDEwLjItMzguMjUsMTAuMi01OC42NWMwLTIwLjQtNS4xMDEtNDAuOC0xMC4yLTU4LjY1TDMxMS4xLDI1NXogTTQ0Ni4yNSwxMTkuODUgICAgTDQxNS42NSwxNTNjMTUuMywzMC42LDI1LjUsNjYuMywyNS41LDEwMnMtMTAuMiw3MS40LTI1LjUsMTAybDMwLjYsMzAuNmMyNS41LTM4LjI1LDM4LjI1LTg2LjY5OSwzOC4yNS0xMzUuMTQ5ICAgIFM0NzEuNzUsMTU4LjEsNDQ2LjI1LDExOS44NXogTTM0OS4zNSwxNDUuMzVMMjA0LDBoLTI1LjV2MTkzLjhMNjEuMiw3Ni41bC0zNS43LDM1LjdMMTY4LjMsMjU1TDI1LjUsMzk3LjhsMzUuNywzNS43bDExNy4zLTExNy4zICAgIFY1MTBIMjA0bDE0NS4zNS0xNDUuMzVMMjM5LjcsMjU1TDM0OS4zNSwxNDUuMzV6IE0yMjkuNSw5Ni45bDQ4LjQ1LDQ4LjQ1TDIyOS41LDE5My44Vjk2Ljl6IE0yNzcuOTUsMzY0LjY1TDIyOS41LDQxMy4xVjMxNi4yICAgIEwyNzcuOTUsMzY0LjY1eiIgZmlsbD0iI0ZGRkZGRiIvPgoJPC9nPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=" />
+            </span>
+        </nav>
+        <!-- main -->
+        <div class="w3-main w3-padding" style="height: 87vh; margin-top: 50px; overflow-y: scroll;">
+            <div class="w3-flex">
+                <div class="w3-flex-item" v-for="device in devices">
+                    <mj_ht_v1 :device="device" v-if="device.type == 'MJ_HT_V1'">Loading</mj_ht_v1>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- scanning -->
+        <div class="w3-modal" v-if="scanning" style="display:block">
+            <div class="w3-modal-content">
+                <header class="w3-container w3-teal">
+                    <span v-on:click="scanning=false" class="w3-button w3-display-topright">&times;</span>
+                    <h4>Select BLE device</h4>
+                </header>
+                <div class="w3-container">
+                    <ul class="w3-ul">
+                        <li class="w3-bar" v-for="dev in bt_devices" v-on:click="addDevice(dev)">
+                            <div class="w3-bar-item">
+                                <span class="w3-large">{{ dev.name }}</span><br>
+                                <span>{{ dev.id }}</span>
+                            </div>
+                        </li>
+                        <li class="w3-bar" v-if="bt_devices.length == 0">
+                            <div class="w3-bar-item">
+                                <span class="w3-large">No devices found</span><br>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <footer class="w3-container w3-teal">
+                    <p></p>
+                </footer>
+            </div>
+        </div>
+
+        <!-- scanning -->
+        <div class="w3-modal" v-if="selectedDevice != null" style="display:block">
+            <div class="w3-modal-content">
+                <header class="w3-container w3-indigo">
+                    <span v-on:click="selectedDevice=null" class="w3-button w3-display-topright">&times;</span>
+                    <h4>Edit device </h4>
+                </header>
+                <div class="w3-container">
+                    <label>First Name</label>
+                    <input class="w3-input" type="text" v-model="selectedDevice.name">
+                </div>
+
+                <footer class="w3-container w3-indigo">
+                    <p></p>
+                </footer>
+            </div>
+        </div>
+
+        <!-- scanning -->
+        <div class="w3-modal" v-if="debugView" style="display:block">
+            <div class="w3-modal-content">
+                <header class="w3-container w3-indigo">
+                    <span v-on:click="debugView=false" class="w3-button w3-display-topright">&times;</span>
+                    <h4>Debug</h4>
+                </header>
+                <div class="w3-container">
+                    <ul class="w3-ul">
+                        <li v-for="data in debug_data">{{ data }}</li>
+                    </ul>
+                </div>
+
+                <footer class="w3-container w3-indigo">
+                    <p></p>
+                </footer>
+            </div>
+        </div>
+
+        <!-- loading spinner -->
+        <div class="loading-container w3-indigo" v-if="showLoading">
+            <div class="spinner">
+                <div class="double-bounce1"></div>
+                <div class="double-bounce2"></div>
+            </div>
+        </div>
+    </div>
+    <!-- app -->
+    <script src="js/app.js"></script>
+</body>
+
+</html>
